@@ -2,11 +2,6 @@
 
 namespace ProcessWire;
 
-function rockgatekeeper(): RockGatekeeper
-{
-  return wire()->modules->get('RockGatekeeper');
-}
-
 /**
  * @author Bernhard Baumrock, 28.07.2025
  * @license Licensed under MIT
@@ -22,22 +17,6 @@ class RockGatekeeper extends WireData implements Module
 
     $this->allowUser();
     $this->preventAccess();
-  }
-
-  private function preventAccess()
-  {
-    // if not a guest, do nothing
-    if (!wire()->user->isGuest()) return;
-
-    // no redirect if correct password is set
-    $pass = wire()->config->gatekeeper;
-    if (wire()->session->gatekeeperPassword === $pass) return;
-
-    // if the IP is allowed we also exit early
-    if (wire()->session->gatekeeperIP === wire()->session->getIP()) return;
-
-    // no access
-    die('no access');
   }
 
   private function allowUser()
@@ -59,6 +38,22 @@ class RockGatekeeper extends WireData implements Module
     // redirect to the same page but without the gatekeeper param
     $url = $this->removeQueryParam();
     wire()->session->redirect($url);
+  }
+
+  private function preventAccess()
+  {
+    // if not a guest, do nothing
+    if (!wire()->user->isGuest()) return;
+
+    // no redirect if correct password is set
+    $pass = wire()->config->gatekeeper;
+    if (wire()->session->gatekeeperPassword === $pass) return;
+
+    // if the IP is allowed we also exit early
+    if (wire()->session->gatekeeperIP === wire()->session->getIP()) return;
+
+    // no access
+    die('no access');
   }
 
   private function removeQueryParam()
