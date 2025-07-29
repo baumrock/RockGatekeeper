@@ -13,8 +13,6 @@ class RockGatekeeper extends WireData implements Module
 
   public function ready()
   {
-    $this->allowIP();
-
     // early exits for minimal footprint
     if (!wire()->config->gatekeeper) return;
     if (wire()->config->external) return; // cli usage
