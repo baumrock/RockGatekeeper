@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/baumrock/RockGatekeeper/compare/v1.2.0...v1.2.1) (2025-07-29)
+
+
+### Bug Fixes
+
+* remove allowIP ([e10e0bf](https://github.com/baumrock/RockGatekeeper/commit/e10e0bf0f280501b19ed4b0cc9563221acafb37b))
+
 ## [1.2.0](https://github.com/baumrock/RockGatekeeper/compare/v1.1.0...v1.2.0) (2025-07-29)
 
 
