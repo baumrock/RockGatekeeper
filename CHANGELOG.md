@@ -1,4 +1,11 @@
-## 1.1.0 (2025-07-28)
+## [1.2.0](https://github.com/baumrock/RockGatekeeper/compare/v1.1.0...v1.2.0) (2025-07-29)
+
+
+### Features
+
+* allow ip across different sessions ([0d831ab](https://github.com/baumrock/RockGatekeeper/commit/0d831ab364fd480545cb46636a2037a6c17f5133))
+
+## [1.1.0](https://github.com/baumrock/RockGatekeeper/compare/f7c04d0b078531ca640409cf474449290f4a2917...v1.1.0) (2025-07-28)
 
 
 ### Features
