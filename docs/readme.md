@@ -40,3 +40,15 @@ https://yoursite.com/?gatekeeper=your-secret-password
 ```
 
 After successful authentication, users will be redirected to the same page without the password parameter, and they'll have access to the entire site for the duration of their session.
+
+## Advanced
+
+You can disable rockgatekeeper from preventing access via hook. For example let's say we want to allow requests on Mondays:
+
+```php
+// in site/init.php
+wire()->addHookBefore('RockGatekeeper::preventAccess', function ($event) {
+  // disable rockgatekeeper on mondays
+  if (site()->isMonday()) $event->replace = true;
+});
+```

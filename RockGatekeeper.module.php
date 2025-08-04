@@ -63,7 +63,7 @@ class RockGatekeeper extends WireData implements Module
     return isset($ips[$ip]) && $ips[$ip] > time();
   }
 
-  private function preventAccess()
+  public function ___preventAccess()
   {
     // if not a guest, do nothing
     if (!wire()->user->isGuest()) return;
