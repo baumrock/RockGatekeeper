@@ -7,9 +7,11 @@ namespace ProcessWire;
  * @license Licensed under MIT
  * @link https://www.baumrock.com
  */
-class RockGatekeeper extends WireData implements Module
+class RockGatekeeper extends WireData implements Module, ConfigurableModule
 {
   const cachekey = 'gatekeeper-ips';
+  public $allowIP = false;
+  public $duration = false;
 
   public function ready()
   {
@@ -17,6 +19,7 @@ class RockGatekeeper extends WireData implements Module
     if (!wire()->config->gatekeeper) return;
     if (wire()->config->external) return; // cli usage
     if (wire()->config->ajax) return; // ajax usage
+    if (!$this->duration) $this->duration = 30;
 
     $this->checkPassword();
     $this->preventAccess();
@@ -24,9 +27,10 @@ class RockGatekeeper extends WireData implements Module
 
   private function allowIP()
   {
+    if (!$this->allowIP) return;
     $ip = wire()->session->getIP();
     $ips = wire()->cache->get(self::cachekey) ?: [];
-    $ips[$ip] = time() + 60 * 30; // +30min
+    $ips[$ip] = time() + 60 * $this->duration;
     wire()->cache->save(self::cachekey, $ips);
   }
 
@@ -51,6 +55,34 @@ class RockGatekeeper extends WireData implements Module
     wire()->session->redirect($url);
   }
 
+  /**
+   * Config inputfields
+   * @param InputfieldWrapper $inputfields
+   */
+  public function getModuleConfigInputfields($inputfields)
+  {
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'allowIP',
+      'label' => 'Allow IP',
+      'value' => $this->allowIP,
+      'description' => 'When enabled, allows access from the same IP address after successful password authentication. Useful for testing workflows across multiple devices on the same network (e.g., testing email signup links on your phone while developing on desktop). Note: This will grant access to ALL devices on the same network, so use with caution.',
+      'checked' => $this->allowIP,
+      'icon' => 'globe',
+    ]);
+
+    $inputfields->add([
+      'type' => 'integer',
+      'name' => 'duration',
+      'label' => 'Duration',
+      'value' => $this->duration,
+      'description' => 'How long a successful password authentication is valid for. Default is 30 minutes.',
+      'icon' => 'hourglass-2',
+      'notes' => 'If your ProcessWire session timeout is set to a lower value, this will be ignored.',
+    ]);
+    return $inputfields;
+  }
+
   private function hasCorrectPassword()
   {
     return wire()->session->gatekeeperPassword === wire()->config->gatekeeper;
@@ -63,7 +95,7 @@ class RockGatekeeper extends WireData implements Module
     return isset($ips[$ip]) && $ips[$ip] > time();
   }
 
-  private function preventAccess()
+  public function ___preventAccess()
   {
     // if not a guest, do nothing
     if (!wire()->user->isGuest()) return;
