@@ -19,6 +19,10 @@ class RockGatekeeper extends WireData implements Module, ConfigurableModule
     if (!wire()->config->gatekeeper) return;
     if (wire()->config->external) return; // cli usage
     if (wire()->config->ajax) return; // ajax usage
+
+    $method = wire()->input->requestMethod();
+    if ($this->allowNonGET && $method !== 'GET') return;
+
     if (!$this->duration) $this->duration = 30;
 
     $this->checkPassword();
@@ -80,6 +84,15 @@ class RockGatekeeper extends WireData implements Module, ConfigurableModule
       'icon' => 'hourglass-2',
       'notes' => 'If your ProcessWire session timeout is set to a lower value, this will be ignored.',
     ]);
+
+    $inputfields->add([
+      'type' => 'checkbox',
+      'name' => 'allowNonGET',
+      'label' => 'Allow all non-GET requests',
+      'checked' => $this->allowNonGET,
+      'notes' => 'This can be useful for allowing webhooks that send POST requests etc.',
+    ]);
+
     return $inputfields;
   }
 
