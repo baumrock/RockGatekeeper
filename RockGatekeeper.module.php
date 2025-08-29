@@ -10,8 +10,12 @@ namespace ProcessWire;
 class RockGatekeeper extends WireData implements Module, ConfigurableModule
 {
   const cachekey = 'gatekeeper-ips';
+  const defaultDuration = 30;
+  const defaultDieMessage = 'no access';
+
   public $allowIP = false;
   public $duration = false;
+  public $dieMessage = false;
 
   public function ready()
   {
@@ -23,7 +27,8 @@ class RockGatekeeper extends WireData implements Module, ConfigurableModule
     $method = wire()->input->requestMethod();
     if ($this->allowNonGET && $method !== 'GET') return;
 
-    if (!$this->duration) $this->duration = 30;
+    if (!$this->duration) $this->duration = self::defaultDuration;
+    if (!$this->dieMessage) $this->dieMessage = self::defaultDieMessage;
 
     $this->checkPassword();
     $this->preventAccess();
@@ -80,7 +85,7 @@ class RockGatekeeper extends WireData implements Module, ConfigurableModule
       'name' => 'duration',
       'label' => 'Duration',
       'value' => $this->duration,
-      'description' => 'How long a successful password authentication is valid for. Default is 30 minutes.',
+      'description' => 'How long a successful password authentication is valid for. Default is ' . self::defaultDuration . ' minutes.',
       'icon' => 'hourglass-2',
       'notes' => 'If your ProcessWire session timeout is set to a lower value, this will be ignored.',
     ]);
@@ -91,6 +96,16 @@ class RockGatekeeper extends WireData implements Module, ConfigurableModule
       'label' => 'Allow all non-GET requests',
       'checked' => $this->allowNonGET,
       'notes' => 'This can be useful for allowing webhooks that send POST requests etc.',
+    ]);
+
+    // make die message configurable
+    $inputfields->add([
+      'type' => 'text',
+      'name' => 'dieMessage',
+      'label' => 'Message shown when access is denied',
+      'value' => $this->dieMessage,
+      'notes' => 'Empty = "' . self::defaultDieMessage . '"
+        From a security perspective, it is good to use a custom but generic message.',
     ]);
 
     return $inputfields;
@@ -123,7 +138,7 @@ class RockGatekeeper extends WireData implements Module, ConfigurableModule
     if ($this->isAllowedIP()) return;
 
     // no access
-    die('no access');
+    die($this->dieMessage);
   }
 
   private function removeIP()
