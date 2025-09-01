@@ -1,3 +1,11 @@
+## [1.4.0](https://github.com/baumrock/RockGatekeeper/compare/v1.3.0...v1.4.0) (2025-09-01)
+
+
+### Features
+
+* add option to allow non-GET ([9d756af](https://github.com/baumrock/RockGatekeeper/commit/9d756afce642c9b44984597ac832a99fc1c4e9cc))
+* make no access message configurable ([f24e492](https://github.com/baumrock/RockGatekeeper/commit/f24e492f021a723e78efcef69749f58d0033a148))
+
 ## [1.3.0](https://github.com/baumrock/RockGatekeeper/compare/v1.2.1...v1.3.0) (2025-08-05)
 
 
